@@ -1,0 +1,55 @@
+#!/bin/bash
+
+echo "Warming up..."
+
+SECONDS_RUNNING=0
+
+function floor {
+	local _dividend=$1
+	local _divisior=$2
+
+	echo $((($_dividend - ($_dividend % $_divisior )) / $_divisior))
+}
+
+function to_two_digits {
+	local _input=$1
+
+	printf "%02d\n" $_input
+}
+
+function get_hours {
+	local _seconds=$1
+	local _hours=$(floor $_seconds 3600)
+
+	echo $(to_two_digits $_hours)
+}
+
+function get_minutes {
+	local _seconds=$1
+	local _minutes=$(floor $_seconds 60)
+	local _minutes_remaining=$(($_minutes % 60))
+
+	echo $(to_two_digits $_minutes_remaining)
+}
+
+function get_seconds {
+	local _seconds=$1
+	local _minute_seconds=$(($_seconds % 60))
+
+	echo $(to_two_digits $_minute_seconds)
+}
+
+while (true)
+do
+	sleep 1
+	((SECONDS_RUNNING++))
+
+	_HOURS=$(get_hours $SECONDS_RUNNING)
+	_MINUTES=$(get_minutes $SECONDS_RUNNING)
+	_SECONDS=$(get_seconds $SECONDS_RUNNING)
+
+	_OUTPUT="Timer: $_HOURS:$_MINUTES:$_SECONDS"
+
+	echo -e "\e[1A\e[K$_OUTPUT"
+done;
+
